@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 interface Param {
   id: number;
@@ -24,6 +24,7 @@ interface Props {
 interface State {
   modelValues: ParamValue[];
   params: Param[];
+  showModel: boolean;
 }
 
 const params: Param[] = [
@@ -46,7 +47,7 @@ class ParamEditor extends React.Component<Props, State> {
 
     const modelValues = this.props.model.paramValues;
 
-    this.state = { modelValues, params };
+    this.state = { modelValues, params, showModel: false };
   }
 
   onChangeHandler = (paramId: number, newValue: string) => {
@@ -58,25 +59,54 @@ class ParamEditor extends React.Component<Props, State> {
     }));
   };
 
+  getModel = () => {
+    return (
+      <div>
+        <ul>
+          {this.state.modelValues.map((item) => (
+            <li key={item.paramId}>
+              {
+                this.state.params.find((param) => param.id === item.paramId)
+                  ?.name
+              }
+              : {item.value}
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
+  };
+
+  toggleModelVisibility = () => {
+    this.setState((prevState) => ({ showModel: !prevState.showModel })); // Переключение видимости
+  };
+
   render() {
     return (
-      <form>
-        {this.state.params.map((param) => (
-          <label key={param.id}>
-            {param.name}
-            <input
-              type="text"
-              value={
-                this.state.modelValues.find((item) => item.paramId === param.id)
-                  ?.value || ""
-              }
-              onChange={(event) =>
-                this.onChangeHandler(param.id, event.target.value)
-              }
-            />
-          </label>
-        ))}
-      </form>
+      <>
+        <form>
+          {this.state.params.map((param) => (
+            <label key={param.id}>
+              {param.name}
+              <input
+                type="text"
+                value={
+                  this.state.modelValues.find(
+                    (item) => item.paramId === param.id
+                  )?.value || ""
+                }
+                onChange={(event) =>
+                  this.onChangeHandler(param.id, event.target.value)
+                }
+              />
+            </label>
+          ))}
+        </form>
+        <button onClick={this.toggleModelVisibility}>
+          {this.state.showModel ? "Скрыть модель" : "Показать модель"}
+        </button>
+        {this.state.showModel && this.getModel()}
+      </>
     );
   }
 }
