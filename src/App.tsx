@@ -13,7 +13,7 @@ interface ParamValue {
 
 interface Model {
   paramValues: ParamValue[];
-  colors?: string[]; // Добавлено для расширяемости
+  colors?: string[];
 }
 
 interface Props {
@@ -103,7 +103,9 @@ class ParamEditor extends React.Component<Props, State> {
           ))}
         </form>
         <button onClick={this.toggleModelVisibility}>
-          {this.state.showModel ? "Скрыть модель" : "Показать модель"}
+          {this.state.showModel
+            ? "Скрыть модель (getModel)"
+            : "Показать модель (getModel)"}
         </button>
         {this.state.showModel && this.getModel()}
       </>
